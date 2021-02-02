@@ -538,7 +538,7 @@ class nmeaBridge(object):
             result = parser(line)
             if result:
                 name, msg = result
-                msg['device'] = line[1:3] + device
+                msg['device'] = line[1:3] + str(device)
                 self.msgs[name] = msg
                 return
 
