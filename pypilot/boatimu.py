@@ -21,6 +21,7 @@ try:
     import vector, quaternion
     from client import pypilotClient
     from values import *
+    from imusim import RTIMUsim
 
     from nonblockingpipe import NonBlockingPipe
 except:
@@ -33,6 +34,8 @@ except ImportError:
     print('RTIMU library not detected, please install it')
 
 class IMU(object):
+    USE_SIMULATED_IMU = True
+
     def __init__(self, server):
         self.client = pypilotClient(server)
         self.multiprocessing = server.multiprocessing
@@ -83,7 +86,12 @@ class IMU(object):
 
     def init(self):
         self.s.IMUType = 0 # always autodetect imu
-        rtimu = RTIMU.RTIMU(self.s)
+        rtimu = None
+        if IMU.USE_SIMULATED_IMU:
+            rtimu = RTIMUsim()
+        else:
+            rtimu = RTIMU.RTIMU(self.s)
+
         if rtimu.IMUName() == 'Null IMU':
             print('no IMU detected... try again')
             return False
